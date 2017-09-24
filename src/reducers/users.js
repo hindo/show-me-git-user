@@ -1,4 +1,4 @@
-import { REQUEST_USERS, RECEIVED_USERS } from '../actions/users'
+import { REQUEST_USERS, RECEIVED_USERS, RECEIVED_MORE_USERS } from '../actions/users'
 
 const users = (state = {
   isFetching: false,
@@ -15,6 +15,13 @@ const users = (state = {
         ...state,
         isFetching: false,
         users: action.users,
+        lastUpdate: action.receivedAt
+      }
+    case RECEIVED_MORE_USERS:
+      return {
+        ...state,
+        isFetching: false,
+        users: [...state.users].concat(action.users),
         lastUpdate: action.receivedAt
       }
     default:
