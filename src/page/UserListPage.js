@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Button, Loader, Divider } from 'semantic-ui-react'
 
 import UserList from '../components/UserList'
-import { getUsers } from '../actions/users'
+import { getOrReturnUsers, getMoreUsers } from '../actions/users'
 
 class UserListPage extends Component {
   constructor () {
@@ -13,11 +13,12 @@ class UserListPage extends Component {
 
   componentDidMount () {
     const { dispatch } = this.props
-    dispatch(getUsers())
+    dispatch(getOrReturnUsers())
   }
 
   fetchMore () {
-    console.log('fetch more')
+    const { dispatch } = this.props
+    dispatch(getMoreUsers())
   }
 
   render () {

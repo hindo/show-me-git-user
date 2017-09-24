@@ -3,36 +3,32 @@ import { connect } from 'react-redux'
 import { Loader } from 'semantic-ui-react'
 
 import UserDetails from '../components/UserDetails'
-import { getPersona } from '../api/users'
+import { getUser } from '../actions/user'
 
 class UserDetailsPage extends Component {
-  state = {
-    user: {},
-    isLoading: false
-  }
-
   componentDidMount () {
-    const match = this.props.match;
-    this.setState({
-      isLoading: true
-    })
-    getPersona(match.params.personaId)
-      .then(response => {
-        this.setState({
-          user: response.data,
-          isLoading: false
-        })
-      })
+    const { dispatch, match } = this.props
+    dispatch(getUser(match.params.personaId))
   }
 
   render () {
+    const { details, isFetching } = this.props
     return (
       <div>
-        <Loader size='medium' active={this.state.isLoading}>Loading</Loader>
-        <UserDetails user={this.state.user}/>
+        <Loader size='medium' active={isFetching}>Loading</Loader>
+        <UserDetails user={details} />
       </div>
     )
   }
 }
 
-export default UserDetailsPage
+const mapStateToProps = state => {
+  const {
+    details,
+    isFetching
+  } = state.user
+
+  return { details, isFetching }
+}
+
+export default connect(mapStateToProps)(UserDetailsPage)

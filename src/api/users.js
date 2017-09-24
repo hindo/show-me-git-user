@@ -17,7 +17,6 @@ export function getMore () {
   return axios.get(link.next.url)
     .then(response => {
       link = parseLinkHeader(response.headers.link)
-      console.log(link)
       return response
     })
 }

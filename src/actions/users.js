@@ -1,33 +1,49 @@
-import parseLinkHeader from 'parse-link-header'
-
-import { getList } from '../api/users'
+import { getList, getMore } from '../api/users'
 
 export const REQUEST_USERS = 'REQUEST_USERS'
 export const RECEIVED_USERS = 'RECEIVED_USERS'
-export const LOAD_MORE = 'LOAD_MORE'
+export const RECEIVED_MORE_USERS = 'RECEIVED_MORE_USERS'
 
 export const requestUsers = () => ({
   type: REQUEST_USERS
 })
 
-export const receivedUsers = (users, link) => ({
+export const receivedUsers = (users) => ({
   type: RECEIVED_USERS,
   users,
-  link,
   receivedAt: Date.now()
 })
 
-export const getUsers = () => (dispatch) => {
+export const receivedMoreUsers = (users) => ({
+  type: RECEIVED_MORE_USERS,
+  users,
+  receivedAt: Date.now()
+})
+
+const getUsers = () => (dispatch) => {
   dispatch(requestUsers())
   return getList().then(response => {
     const users = response.data
-    const link = parseLinkHeader(response.headers.link)
-    dispatch(receivedUsers(users, link))
+    dispatch(receivedUsers(users))
   })
 }
 
-export const loadMore = () => {
-  return {
-    type: LOAD_MORE
+export const getOrReturnUsers = () => (dispatch, getState) => {
+  const state = getState()
+
+  if (!state.users) {
+    return dispatch(getUsers())
   }
+
+  if (!state.users.users.length && !state.users.isFetching) {
+    return dispatch(getUsers())
+  }
+}
+
+export const getMoreUsers = () => (dispatch) => {
+  dispatch(requestUsers())
+  return getMore().then(response => {
+    const users = response.data
+    dispatch(receivedMoreUsers(users))
+  })
 }
